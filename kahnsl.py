@@ -5,7 +5,8 @@ class KahnSl:
         self.v = 0
         self.sorted = []
 
-    def create_sl_from_input(self):
+    # Create the successor list from user-console input
+    def create_from_input(self):
         self.v = int(input("Enter the number of vertices: "))
         self.e = int(input("Enter the number of edges: "))
 
@@ -21,7 +22,8 @@ class KahnSl:
             self.sl[a][0].append(b)
             self.sl[b][1].append(a)
 
-    def create_sl_from_file(self):
+    # Create the successor list from a graph.txt file
+    def create_from_file(self):
         with open("graph.txt") as f:
             self.v, self.e = map(int, f.readline().split())
             for i in range(self.e):
@@ -35,17 +37,19 @@ class KahnSl:
                 self.sl[a][0].append(b)
                 self.sl[b][1].append(a)
 
-    def kahn_start(self):
+    # Init method for Kahn's algorithm
+    def start(self):
         for key, val in self.sl.items():
             if not val[1] and val[0]:
-                self.kahn_go(key)
+                self.__kahn_go(key)
 
         if len(self.sorted) != self.v:
-            print("The graph has a cycle")
+            return "The graph has a cycle"
         else:
-            print('->'.join(map(str, self.sorted)))
+            return '->'.join(map(str, self.sorted))
 
-    def kahn_go(self, k):
+    # Recursive method for Kahn's algorithm
+    def __kahn_go(self, k):
         self.sorted.append(k)
 
         for key, val in self.sl.items():
@@ -56,7 +60,7 @@ class KahnSl:
 
         for next_k in self.sl[k][0]:
             if not self.sl[next_k][1]:
-                self.kahn_go(next_k)
+                self.__kahn_go(next_k)
 
 
 
@@ -64,6 +68,6 @@ if __name__ == "__main__":
     k = KahnSl()
 
     # k.create_am_from_input()
-    k.create_sl_from_file()
+    k.create_from_file()
 
-    k.kahn_start()
+    print(k.start())

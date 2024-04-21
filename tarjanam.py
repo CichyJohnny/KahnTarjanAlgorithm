@@ -7,7 +7,8 @@ class TarjanAm:
         self.count = 0
         self.cycle = False
 
-    def create_am_from_input(self):
+    # Create the adjacency matrix from user-console input
+    def create_from_input(self):
         self.v = int(input("Enter the number of vertices: "))
         self.e = int(input("Enter the number of edges: "))
         self.am = [[0 for _ in range(self.v)] for _ in range(self.v)]
@@ -18,7 +19,8 @@ class TarjanAm:
             self.am[a][b] = 1
             self.am[b][a] = -1
 
-    def create_am_from_file(self):
+    # Create the adjacency matrix from a graph.txt file
+    def create_from_file(self):
         with open("graph.txt") as f:
             self.v, self.e = map(int, f.readline().split())
             self.am = [[0 for _ in range(self.v)] for _ in range(self.v)]
@@ -28,32 +30,34 @@ class TarjanAm:
                 self.am[a][b] = 1
                 self.am[b][a] = -1
 
-    def tarjan_start(self, start=-1):
+    # Init method for Tarjan's algorithm
+    def start(self, start=-1):
         visited = [False] * self.v
         stack_member = [False] * self.v
 
         if start != -1:
-            self.tarjan_go(start, visited, stack_member)
+            self.__tarjan_go(start, visited, stack_member)
 
         for i in range(self.v):
             if not visited[i]:
-                self.tarjan_go(i, visited, stack_member)
+                self.__tarjan_go(i, visited, stack_member)
                 if self.cycle:
                     break
 
         if not self.cycle:
-            print('->'.join(map(str, self.sorted[::-1])))
+            return '->'.join(map(str, self.sorted[::-1]))
         else:
-            print("The graph has a cycle")
+            return "The graph has a cycle"
 
-    def tarjan_go(self, i, visited, stack_member):
+    # Recursive method for Tarjan's algorithm
+    def __tarjan_go(self, i, visited, stack_member):
         visited[i] = True
         stack_member[i] = True
 
         for j in range(self.v):
             if self.am[i][j] == 1:
                 if not visited[j]:
-                    self.tarjan_go(j, visited, stack_member)
+                    self.__tarjan_go(j, visited, stack_member)
                 elif stack_member[j]:
                     self.cycle = True
                     return
@@ -66,6 +70,6 @@ if __name__ == "__main__":
     k = TarjanAm()
 
     # k.create_am_from_input()
-    k.create_am_from_file()
+    k.create_from_file()
 
-    k.tarjan_start(7)
+    print(k.start(7))
